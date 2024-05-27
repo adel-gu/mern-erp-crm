@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Model, Query } from 'mongoose';
 import validator from 'validator';
 
 enum Roles {
@@ -14,7 +14,9 @@ interface IAdmin {
   photo?: string;
 }
 
-const schema = new mongoose.Schema<IAdmin>({
+type AdminModelType = Model<IAdmin>;
+
+const schema = new mongoose.Schema<IAdmin, AdminModelType>({
   active: { type: Boolean, default: true, select: false },
   name: { type: String, required: [true, 'Name field is required'] },
   email: {
@@ -37,5 +39,10 @@ const schema = new mongoose.Schema<IAdmin>({
   photo: String,
 });
 
-const Admin = mongoose.model<IAdmin>('Admin', schema);
+schema.pre<Query<IAdmin | IAdmin[], AdminModelType>>(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
+  next();
+});
+
+const Admin = mongoose.model<IAdmin, AdminModelType>('Admin', schema);
 export default Admin;
