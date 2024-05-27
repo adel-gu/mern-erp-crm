@@ -15,5 +15,6 @@ router
 router
   .route('/reset-password/:email/:token')
   .patch(adminAuth.validateUserResetPasswordRequest, adminAuth.resetPassword);
+router.route('/logout').post(adminAuth.checkAuthToken, adminAuth.logout);
 
 export default router;
