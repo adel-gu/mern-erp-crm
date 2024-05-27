@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Admin from '../../../models/coreModels/Admin';
 import AdminPassword from '../../../models/coreModels/AdminPassword';
 import mongoose from 'mongoose';
+import setToken from './setToken';
 
 const signup = async (req: Request, res: Response) => {
   const session = await mongoose.startSession();
@@ -19,8 +20,6 @@ const signup = async (req: Request, res: Response) => {
       { session },
     );
 
-    console.log('ADMIN: ', admin);
-
     const adminPassword = await AdminPassword.create(
       [
         {
@@ -37,7 +36,7 @@ const signup = async (req: Request, res: Response) => {
     session.endSession();
 
     // const token
-    res.status(200).json({ status: 'success', data: { adminPassword } });
+    setToken(res, admin[0]._id.toString(), 'user sign up successfully');
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
