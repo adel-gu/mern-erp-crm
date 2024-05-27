@@ -5,7 +5,7 @@ const setToken = (res: Response, id: string, message: string) => {
   const token = jwt.sign({ id }, process.env.JWT_SECRET as string, {
     expiresIn: '10d',
   });
-  res
+  return res
     .status(200)
     .cookie('auth_token', token, {
       httpOnly: true,
