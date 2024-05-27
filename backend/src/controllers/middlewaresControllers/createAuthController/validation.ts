@@ -50,3 +50,13 @@ export const validateUserLoginRequest = [
     .withMessage('password must be a string with at least 8 characters long'),
   handleValidationErrors,
 ];
+
+export const validateUserForgotPasswordRequest = [
+  body('email')
+    .trim()
+    .toLowerCase()
+    .isEmail()
+    .notEmpty()
+    .withMessage('Email must be a string'),
+  handleValidationErrors,
+];
