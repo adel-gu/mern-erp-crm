@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import mongoose, { Model, Types } from 'mongoose';
+import mongoose, { Model, Types, Query } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 interface IAdminPassword {
@@ -36,6 +36,7 @@ const schema = new mongoose.Schema<
     type: String,
     required: [true, 'Password field is required'],
     minlength: 8,
+    select: false,
   },
   passwordConfirm: {
     type: String,
@@ -69,6 +70,14 @@ schema.pre('save', async function (next) {
   this.passwordChangedAt = new Date(Date.now() - 1000);
   next();
 });
+
+schema.pre<Query<IAdminPassword | IAdminPassword[], AdminPasswordModelType>>(
+  /^find/,
+  function (next) {
+    this.find({ active: { $ne: false } });
+    next();
+  },
+);
 
 schema.method(
   'checkIsPasswordCorrect',
