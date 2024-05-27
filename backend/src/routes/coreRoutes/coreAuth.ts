@@ -9,5 +9,8 @@ router
 router
   .route('/login')
   .post(adminAuth.validateUserLoginRequest, adminAuth.login);
+router
+  .route('/forgot-password')
+  .post(adminAuth.validateUserForgotPasswordRequest, adminAuth.forgotPassword);
 
 export default router;
