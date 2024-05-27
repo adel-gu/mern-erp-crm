@@ -20,6 +20,7 @@ interface IAdminPasswordMethods {
     hashPassword: string,
   ): Promise<boolean>;
   generateResetToken(): string;
+  checkIsTokenIssuedAfterPwdChanged(JWTTimestamp: number): boolean;
 }
 
 type AdminPasswordModelType = Model<IAdminPassword, {}, IAdminPasswordMethods>;
@@ -88,6 +89,20 @@ schema.method('generateResetToken', function generateResetToken(): string {
   this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
   return resetToken;
 });
+
+schema.method(
+  'checkIsTokenIssuedAfterPwdChanged',
+  function checkIsTokenIssuedAfterPwdChanged(JWTTimestamp: number): boolean {
+    if (this.passwordChangedAt) {
+      const passwordChanged = Math.floor(
+        this.passwordChangedAt.getTime() / 1000,
+      );
+
+      return passwordChanged > JWTTimestamp;
+    }
+    return false;
+  },
+);
 
 const AdminPassword = mongoose.model<IAdminPassword, AdminPasswordModelType>(
   'AdminPassword',
