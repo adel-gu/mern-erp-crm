@@ -9,6 +9,7 @@ import {
   validateUserResetPasswordRequest,
 } from './validation';
 import resetPassword from './resetPassword';
+import checkAuthToken from './checkAuthToken';
 
 export default {
   signup,
@@ -19,4 +20,5 @@ export default {
   validateUserForgotPasswordRequest,
   resetPassword,
   validateUserResetPasswordRequest,
+  checkAuthToken,
 };
