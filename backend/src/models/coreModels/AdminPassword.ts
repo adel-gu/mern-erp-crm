@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import mongoose, { Model, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 
@@ -9,6 +10,8 @@ interface IAdminPassword {
   salt: string;
   passwordConfirm?: string;
   passwordChangedAt?: Date;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
 }
 
 interface IAdminPasswordMethods {
@@ -16,6 +19,7 @@ interface IAdminPasswordMethods {
     password: string,
     hashPassword: string,
   ): Promise<boolean>;
+  generateResetToken(): string;
 }
 
 type AdminPasswordModelType = Model<IAdminPassword, {}, IAdminPasswordMethods>;
@@ -47,6 +51,8 @@ const schema = new mongoose.Schema<
   },
   salt: String,
   passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 });
 
 schema.pre('save', async function (next) {
@@ -66,6 +72,16 @@ schema.method(
     return await bcrypt.compare(password + this.salt, hashPassword);
   },
 );
+
+schema.method('generateResetToken', function generateResetToken(): string {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
+  return resetToken;
+});
 
 const AdminPassword = mongoose.model<IAdminPassword, AdminPasswordModelType>(
   'AdminPassword',
