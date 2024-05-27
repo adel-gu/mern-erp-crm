@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import signup from './signup';
-import { validateUserSignUpRequest } from './validation';
+import login from './login'; // Added import for login function
+import {
+  validateUserSignUpRequest,
+  validateUserLoginRequest,
+} from './validation';
 import { ValidationChain } from 'express-validator';
 
 type IAuthMethods = {
@@ -13,13 +17,28 @@ type IAuthMethods = {
         next: NextFunction,
       ) => Promise<Response<any, Record<string, any>> | undefined>)
   )[];
+  login: (
+    req: Request,
+    res: Response,
+  ) => Promise<Response<any, Record<string, any>> | undefined>;
+  validateUserLoginRequest: (
+    | ValidationChain
+    | ((
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ) => Promise<Response<any, Record<string, any>> | undefined>)
+  )[];
 };
 
-const createAuthController = () => {
-  let authMethods: any = {};
+const createAuthController = (): IAuthMethods => {
+  const authMethods: IAuthMethods = {
+    signup: (req: Request, res: Response) => signup(req, res),
+    validateUserSignUpRequest: validateUserSignUpRequest,
 
-  authMethods.signup = (req: Request, res: Response) => signup(req, res);
-  authMethods.validateUserSignUpRequest = validateUserSignUpRequest;
+    login: (req: Request, res: Response) => login(req, res),
+    validateUserLoginRequest: validateUserLoginRequest,
+  };
 
   return authMethods;
 };
