@@ -1,4 +1,4 @@
-import mongoose, { Types } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 interface IAdminPassword {
@@ -11,9 +11,22 @@ interface IAdminPassword {
   passwordChangedAt?: Date;
 }
 
-const schema = new mongoose.Schema<IAdminPassword>({
+interface IAdminPasswordMethods {
+  checkIsPasswordCorrect(
+    password: string,
+    hashPassword: string,
+  ): Promise<boolean>;
+}
+
+type AdminPasswordModelType = Model<IAdminPassword, {}, IAdminPasswordMethods>;
+
+const schema = new mongoose.Schema<
+  IAdminPassword,
+  AdminPasswordModelType,
+  IAdminPasswordMethods
+>({
   active: { type: Boolean, default: true, select: false },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', unique: true },
   password: {
     type: String,
     required: [true, 'Password field is required'],
@@ -39,10 +52,23 @@ const schema = new mongoose.Schema<IAdminPassword>({
 schema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.salt = await bcrypt.genSalt(12);
-  this.password = await bcrypt.hash(this.password, this.salt);
+  this.password = await bcrypt.hash(this.password + this.salt, this.salt);
   this.passwordConfirm = undefined;
   next();
 });
 
-const AdminPassword = mongoose.model<IAdminPassword>('AdminPassword', schema);
+schema.method(
+  'checkIsPasswordCorrect',
+  async function checkIsPasswordCorrect(
+    password: string,
+    hashPassword: string,
+  ): Promise<boolean> {
+    return await bcrypt.compare(password + this.salt, hashPassword);
+  },
+);
+
+const AdminPassword = mongoose.model<IAdminPassword, AdminPasswordModelType>(
+  'AdminPassword',
+  schema,
+);
 export default AdminPassword;
