@@ -6,7 +6,9 @@ import {
   validateUserSignUpRequest,
   validateUserLoginRequest,
   validateUserForgotPasswordRequest,
+  validateUserResetPasswordRequest,
 } from './validation';
+import resetPassword from './resetPassword';
 
 export default {
   signup,
@@ -15,4 +17,6 @@ export default {
   validateUserLoginRequest,
   forgotPassword,
   validateUserForgotPasswordRequest,
+  resetPassword,
+  validateUserResetPasswordRequest,
 };
