@@ -8,7 +8,7 @@ const forgotPassword = async (req: Request, res: Response) => {
     const { email } = req.body;
 
     const admin = await Admin.findOne({ email });
-    const adminPassword = await AdminPassword.findOne({ userId: admin?._id });
+    const adminPassword = await AdminPassword.findOne({ user: admin?._id });
 
     if (!admin || !adminPassword)
       return res.status(404).json({
@@ -20,7 +20,7 @@ const forgotPassword = async (req: Request, res: Response) => {
     await adminPassword.save({ validateBeforeSave: false });
     const resetURL = `${req.protocol}://${req.get(
       'host',
-    )}/api/v1/reset-password/${resetToken}`;
+    )}/api/v1/reset-password/${admin.email}/${resetToken}`;
 
     const message = `Forgot your password? submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forgot your password, please ignore this email!`;
 
