@@ -8,7 +8,9 @@ const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     const admin = await Admin.findOne({ email });
-    const adminPassword = await AdminPassword.findOne({ user: admin?._id });
+    const adminPassword = await AdminPassword.findOne({
+      user: admin?._id,
+    }).select('+password');
 
     if (
       !admin ||
