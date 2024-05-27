@@ -17,6 +17,7 @@ const forgotPassword = async (req: Request, res: Response) => {
       });
 
     const resetToken = adminPassword.generateResetToken();
+    await adminPassword.save({ validateBeforeSave: false });
     const resetURL = `${req.protocol}://${req.get(
       'host',
     )}/api/v1/reset-password/${resetToken}`;
@@ -30,6 +31,9 @@ const forgotPassword = async (req: Request, res: Response) => {
         message,
       });
     } catch (error) {
+      adminPassword.passwordResetToken = undefined;
+      adminPassword.passwordResetExpires = undefined;
+      await adminPassword.save({ validateBeforeSave: false });
       console.log(error);
       res.status(400).json({
         status: 'fail',
