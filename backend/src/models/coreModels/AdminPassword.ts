@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 
 interface IAdminPassword {
   active: boolean;
-  userId: Types.ObjectId;
+  user: Types.ObjectId;
   password: string;
   createdAt: Date;
   salt: string;
@@ -30,7 +30,7 @@ const schema = new mongoose.Schema<
   IAdminPasswordMethods
 >({
   active: { type: Boolean, default: true, select: false },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', unique: true },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', unique: true },
   password: {
     type: String,
     required: [true, 'Password field is required'],
@@ -60,6 +60,12 @@ schema.pre('save', async function (next) {
   this.salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password + this.salt, this.salt);
   this.passwordConfirm = undefined;
+  next();
+});
+
+schema.pre('save', async function (next) {
+  if (this.isModified('password') && this.isNew) return next();
+  this.passwordChangedAt = new Date(Date.now() - 1000);
   next();
 });
 

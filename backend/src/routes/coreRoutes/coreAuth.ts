@@ -12,5 +12,8 @@ router
 router
   .route('/forgot-password')
   .post(adminAuth.validateUserForgotPasswordRequest, adminAuth.forgotPassword);
+router
+  .route('/reset-password/:email/:token')
+  .patch(adminAuth.validateUserResetPasswordRequest, adminAuth.resetPassword);
 
 export default router;

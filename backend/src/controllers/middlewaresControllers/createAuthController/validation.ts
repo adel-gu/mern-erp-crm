@@ -60,3 +60,19 @@ export const validateUserForgotPasswordRequest = [
     .withMessage('Email must be a string'),
   handleValidationErrors,
 ];
+
+export const validateUserResetPasswordRequest = [
+  body('password')
+    .isString()
+    .notEmpty()
+    .isLength({ min: 8 })
+    .withMessage('password must be a string with at least 8 characters long'),
+  body('passwordConfirm')
+    .isString()
+    .notEmpty()
+    .isLength({ min: 8 })
+    .withMessage(
+      'passwordConfirm must be a string with at least 8 characters long',
+    ),
+  handleValidationErrors,
+];

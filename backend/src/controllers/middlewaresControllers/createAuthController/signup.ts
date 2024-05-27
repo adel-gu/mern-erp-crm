@@ -23,7 +23,7 @@ const signup = async (req: Request, res: Response) => {
     const adminPassword = await AdminPassword.create(
       [
         {
-          userId: admin[0]._id,
+          user: admin[0]._id,
           password,
           passwordConfirm,
         },
