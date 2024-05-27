@@ -35,3 +35,18 @@ export const validateUserSignUpRequest = [
     ),
   handleValidationErrors,
 ];
+
+export const validateUserLoginRequest = [
+  body('email')
+    .trim()
+    .toLowerCase()
+    .isEmail()
+    .notEmpty()
+    .withMessage('Email must be a string'),
+  body('password')
+    .isString()
+    .notEmpty()
+    .isLength({ min: 8 })
+    .withMessage('password must be a string with at least 8 characters long'),
+  handleValidationErrors,
+];
