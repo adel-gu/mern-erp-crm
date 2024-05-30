@@ -1,5 +1,4 @@
 import express from 'express';
-import adminAuth from '../../controllers/coreControllers/authController';
 import meController from '../../controllers/coreControllers/meController';
 
 const router = express.Router();
@@ -8,13 +7,19 @@ const router = express.Router();
 
 // router.use(meController.setMeId);
 router
-  .route('/admin/profile')
-  .get(meController.setMeId, meController.read)
+  .route('/')
+  .get(meController.setReadMeId, meController.readMe)
   .patch(
-    meController.validateUpdateRequest,
-    meController.setMeId,
-    meController.setUpdateBody,
-    meController.update,
+    meController.validateProfileUpdateMeRequest,
+    meController.setUpdateMeProfileData,
+    meController.updateMeProfile,
+  );
+
+router
+  .route('/update-password')
+  .patch(
+    meController.validatePasswordUpdateMeRequest,
+    meController.updateMePassword,
   );
 
 export default router;
