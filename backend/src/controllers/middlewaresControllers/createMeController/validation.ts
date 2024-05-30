@@ -25,3 +25,28 @@ export const validateUpdateMeRequest = [
     .withMessage('Email must be a string'),
   handleValidationErrors,
 ];
+
+export const validateUpdateMePasswordRequest = [
+  body('currentPassword')
+    .isString()
+    .notEmpty()
+    .isLength({ min: 8 })
+    .withMessage(
+      'currentPassword must be a string with at least 8 characters long',
+    ),
+  body('newPassword')
+    .isString()
+    .notEmpty()
+    .isLength({ min: 8 })
+    .withMessage(
+      'newPassword must be a string with at least 8 characters long',
+    ),
+  body('passwordConfirm')
+    .isString()
+    .notEmpty()
+    .isLength({ min: 8 })
+    .withMessage(
+      'passwordConfirm must be a string with at least 8 characters long',
+    ),
+  handleValidationErrors,
+];
