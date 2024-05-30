@@ -1,16 +1,27 @@
-import setMeId from './setMeId';
+import setReadMeId from './setReadMeId';
 import createCRUDController from '../createCrudController';
-import setUpdateMeBody from './setUpdateMeBody';
-import { validateUpdateMeRequest } from './validation';
+import setUpdateMe from './setUpdateMe';
+import updateMePassword from './updateMePassword';
+import {
+  validateUpdateMePasswordRequest,
+  validateUpdateMeRequest,
+} from './validation';
 
-const createMeController = (model: string) => {
-  const meCRUDController = createCRUDController(model);
+const createMeController = () => {
+  const meCRUDController = createCRUDController('Admin');
+
   let meMethods = {
-    setMeId: setMeId,
-    read: meCRUDController.read,
-    setUpdateBody: setUpdateMeBody,
-    update: meCRUDController.updateProfile,
-    validateUpdateRequest: validateUpdateMeRequest,
+    setReadMeId: setReadMeId,
+
+    readMe: meCRUDController.read,
+
+    setUpdateMeProfileData: setUpdateMe,
+
+    updateMeProfile: meCRUDController.update,
+    updateMePassword: updateMePassword,
+
+    validateProfileUpdateMeRequest: validateUpdateMeRequest,
+    validatePasswordUpdateMeRequest: validateUpdateMePasswordRequest,
   };
   return meMethods;
 };
