@@ -52,6 +52,12 @@ const handleJWTError = (err: any) =>
 const handleJWTExpiredError = (err: any) =>
   new AppErrorHandler('Token has been expired, please log in again.', 401);
 
+const handleExpressValidation = (err: any) => {
+  const formattedParts = err.map((item: any) => `${item.path}: ${item.value}`);
+  const message = `Invalid inputs ${formattedParts.join(' and ')}`;
+  return new AppErrorHandler(message, 400);
+};
+
 // * ================ //
 
 // ! Error Request handler controller  //
@@ -70,6 +76,7 @@ const errorRequestHandler: ErrorRequestHandler = (err, req, res, next) => {
     if (error.name === 'JsonWebTokenError') error = handleJWTError(error);
     if (error.name === 'TokenExpiredError')
       error = handleJWTExpiredError(error);
+    if (error.errors) error = handleExpressValidation(error.errors);
 
     sendErrorProd(error, res);
   }
