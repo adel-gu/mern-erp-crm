@@ -3,20 +3,19 @@ import mongoose, { Document, Model } from 'mongoose';
 import catchErrors from '../../../handlers/errors/catchErrors';
 import AppErrorHandler from '../../../handlers/errors/appErrorHandler';
 
-const readDoc = (model: string) =>
+const updateDoc = (model: string) =>
   catchErrors(async (req: Request, res: Response, next: NextFunction) => {
+    console.log('ADMIN: ', req.params.id);
     const Model = mongoose.model(model);
-    const doc = await Model.findById(req.params.id);
-
-    if (!doc)
-      return next(
-        new AppErrorHandler('Document with that ID is not found', 404),
-      );
-
+    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!doc) return next(new AppErrorHandler(`Document not found`, 404));
     res.status(200).json({
       status: 'success',
       data: doc,
     });
   });
 
-export default readDoc;
+export default updateDoc;

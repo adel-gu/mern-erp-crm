@@ -1,4 +1,5 @@
 import readDoc from './read';
+import updateDoc from './update';
 
 // export default {
 //   read: readDoc,
@@ -7,6 +8,7 @@ import readDoc from './read';
 const createCRUDController = (model: string) => {
   return {
     read: readDoc(model),
+    updateProfile: updateDoc(model),
   };
 };
 

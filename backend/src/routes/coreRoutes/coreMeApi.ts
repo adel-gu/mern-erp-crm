@@ -6,6 +6,15 @@ const router = express.Router();
 
 //                  !Profile management                    //
 
-router.use(adminAuth.checkAuthToken);
-router.route('/admin/profile').get(meController.setId, meController.read);
+// router.use(meController.setMeId);
+router
+  .route('/admin/profile')
+  .get(meController.setMeId, meController.read)
+  .patch(
+    meController.validateUpdateRequest,
+    meController.setMeId,
+    meController.setUpdateBody,
+    meController.update,
+  );
+
 export default router;
