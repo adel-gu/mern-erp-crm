@@ -20,7 +20,7 @@ app.use(morgan('dev'));
 
 // Routes
 app.use('/api/v1', coreAuthRouter);
-app.use('/api/v1', adminAuth.checkAuthToken, coreMeRouter);
+app.use('/api/v1/admin/profile', adminAuth.checkAuthToken, coreMeRouter);
 
 // Catch errors route
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
