@@ -1,11 +1,13 @@
 import crypto from 'crypto';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import Admin from '../../../models/coreModels/Admin';
 import AdminPassword from '../../../models/coreModels/AdminPassword';
 import setToken from './setToken';
+import catchErrors from '../../../handlers/errors/catchErrors';
+import AppErrorHandler from '../../../handlers/errors/appErrorHandler';
 
-const resetPassword = async (req: Request, res: Response) => {
-  try {
+const resetPassword = catchErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
     const { email, token } = req.params;
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
@@ -17,9 +19,7 @@ const resetPassword = async (req: Request, res: Response) => {
     });
 
     if (!admin || !adminPassword)
-      return res
-        .status(400)
-        .json({ status: 'fail', message: 'Token is Invalid or has expired' });
+      return next(new AppErrorHandler('Token is Invalid or has expired', 400));
 
     adminPassword.password = req.body.password;
     adminPassword.passwordConfirm = req.body.passwordConfirm;
@@ -29,10 +29,7 @@ const resetPassword = async (req: Request, res: Response) => {
     await adminPassword.save();
 
     setToken(res, admin._id.toString(), 'Password reset successfully!');
-  } catch (error) {
-    console.log('Error: ', error);
-    res.status(500).json({ status: 'error', error });
-  }
-};
+  },
+);
 
 export default resetPassword;

@@ -1,10 +1,12 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import Admin from '../../../models/coreModels/Admin';
 import AdminPassword from '../../../models/coreModels/AdminPassword';
 import setToken from './setToken';
+import catchErrors from '../../../handlers/errors/catchErrors';
+import AppErrorHandler from '../../../handlers/errors/appErrorHandler';
 
-const login = async (req: Request, res: Response) => {
-  try {
+const login = catchErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
 
     const admin = await Admin.findOne({ email });
@@ -20,17 +22,11 @@ const login = async (req: Request, res: Response) => {
         adminPassword.password,
       ))
     )
-      return res.status(401).json({
-        status: 'fail',
-        message: 'Invalid credentials',
-      });
+      return next(new AppErrorHandler('Invalid credentials', 401));
 
     // const token
-    setToken(res, admin._id.toString(), 'user login successfully');
-  } catch (error) {
-    console.log('Error: ', error);
-    res.status(500).json({ status: 'error', error });
-  }
-};
+    setToken(res, admin._id.toString(), 'user logged in successfully');
+  },
+);
 
 export default login;
