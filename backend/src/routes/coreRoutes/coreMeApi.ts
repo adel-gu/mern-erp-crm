@@ -13,7 +13,8 @@ router
     meController.validateProfileUpdateMeRequest,
     meController.setUpdateMeProfileData,
     meController.updateMeProfile,
-  );
+  )
+  .delete(meController.deleteMe);
 
 router
   .route('/update-password')
