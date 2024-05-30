@@ -17,7 +17,7 @@ app.use(morgan('dev'));
 app.use('/api/v1', coreAuthRouter);
 
 // Catch errors route
-app.use('*', (req: Request, res: Response, next: NextFunction) => {
+app.all('*', (req: Request, res: Response, next: NextFunction) => {
   next(
     new AppErrorHandler(`can't find ${req.originalUrl} on this server!`, 404),
   );
