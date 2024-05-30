@@ -4,6 +4,8 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 
 import coreAuthRouter from './routes/coreRoutes/coreAuth';
+import coreMeRouter from './routes/coreRoutes/coreMeApi';
+
 import AppErrorHandler from './handlers/errors/appErrorHandler';
 import errorRequestHandler from './handlers/errors/errorControllerHandler';
 
@@ -15,6 +17,7 @@ app.use(morgan('dev'));
 
 // Routes
 app.use('/api/v1', coreAuthRouter);
+app.use('/api/v1', coreMeRouter);
 
 // Catch errors route
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
