@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import Admin from '../../models/coreModels/Admin';
-import AdminPassword from '../../models/coreModels/AdminPassword';
+import Admin from '../../models/Admin';
 import setToken from './setToken';
 import catchErrors from '../../handlers/errors/catchErrors';
 import AppErrorHandler from '../../handlers/errors/appErrorHandler';
@@ -9,18 +8,10 @@ const login = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
 
-    const admin = await Admin.findOne({ email });
-    const adminPassword = await AdminPassword.findOne({
-      user: admin?._id,
-    }).select('+password');
-
+    const admin = await Admin.findOne({ email }).select('+password');
     if (
       !admin ||
-      !adminPassword ||
-      !(await adminPassword.checkIsPasswordCorrect(
-        password,
-        adminPassword.password,
-      ))
+      !(await admin.checkIsPasswordCorrect(password, admin.password))
     )
       return next(new AppErrorHandler('Invalid credentials', 401));
 

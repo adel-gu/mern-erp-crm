@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 import { NextFunction, Request, Response } from 'express';
-import Admin from '../../models/coreModels/Admin';
-import AdminPassword from '../../models/coreModels/AdminPassword';
+import Admin from '../../models/Admin';
 import setToken from './setToken';
 import catchErrors from '../../handlers/errors/catchErrors';
 import AppErrorHandler from '../../handlers/errors/appErrorHandler';
@@ -11,22 +10,21 @@ const resetPassword = catchErrors(
     const { email, token } = req.params;
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
-    const admin = await Admin.findOne({ email });
-    const adminPassword = await AdminPassword.findOne({
-      user: admin?._id,
+    const admin = await Admin.findOne({
+      email,
       passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: Date.now() },
     });
 
-    if (!admin || !adminPassword)
+    if (!admin)
       return next(new AppErrorHandler('Token is Invalid or has expired', 400));
 
-    adminPassword.password = req.body.password;
-    adminPassword.passwordConfirm = req.body.passwordConfirm;
-    adminPassword.passwordResetToken = undefined;
-    adminPassword.passwordResetExpires = undefined;
+    admin.password = req.body.password;
+    admin.passwordConfirm = req.body.passwordConfirm;
+    admin.passwordResetToken = undefined;
+    admin.passwordResetExpires = undefined;
 
-    await adminPassword.save();
+    await admin.save();
 
     setToken(res, admin._id.toString(), 'Password reset successfully!');
   },

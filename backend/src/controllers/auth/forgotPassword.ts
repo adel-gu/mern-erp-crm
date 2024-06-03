@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import Admin from '../../models/coreModels/Admin';
-import AdminPassword from '../../models/coreModels/AdminPassword';
+import Admin from '../../models/Admin';
 import sendEmail from './sendEmail';
 import catchErrors from '../../handlers/errors/catchErrors';
 import AppErrorHandler from '../../handlers/errors/appErrorHandler';
@@ -10,13 +9,12 @@ const forgotPassword = catchErrors(
     const { email } = req.body;
 
     const admin = await Admin.findOne({ email });
-    const adminPassword = await AdminPassword.findOne({ user: admin?._id });
 
-    if (!admin || !adminPassword)
+    if (!admin)
       return next(new AppErrorHandler('No user associated to that email', 404));
 
-    const resetToken = adminPassword.generateResetToken();
-    await adminPassword.save({ validateBeforeSave: false });
+    const resetToken = admin.generateResetToken();
+    await admin.save({ validateBeforeSave: false });
     const resetURL = `${req.protocol}://${req.get(
       'host',
     )}/api/v1/reset-password/${admin.email}/${resetToken}`;
@@ -30,9 +28,9 @@ const forgotPassword = catchErrors(
         message,
       });
     } catch (error) {
-      adminPassword.passwordResetToken = undefined;
-      adminPassword.passwordResetExpires = undefined;
-      await adminPassword.save({ validateBeforeSave: false });
+      admin.passwordResetToken = undefined;
+      admin.passwordResetExpires = undefined;
+      await admin.save({ validateBeforeSave: false });
       return next(
         new AppErrorHandler(
           'There was an error while sending the reset token email',

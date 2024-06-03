@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import Admin from '../../models/coreModels/Admin';
+import Admin from '../../models/Admin';
 import AdminPassword from '../../models/coreModels/AdminPassword';
 
 import catchErrors from '../../handlers/errors/catchErrors';
