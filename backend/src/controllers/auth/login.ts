@@ -8,7 +8,7 @@ const login = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
 
-    const admin = await Admin.findOne({ email }).select('+password');
+    const admin = await Admin.findOne({ email }).select('+password +salt');
     if (
       !admin ||
       !(await admin.checkIsPasswordCorrect(password, admin.password))
