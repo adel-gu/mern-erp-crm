@@ -17,7 +17,11 @@ declare global {
 const checkAuthToken = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies['auth_token'];
-    if (!token) return next(new AppErrorHandler('', 401));
+
+    if (!token)
+      return next(
+        new AppErrorHandler('You are not logged in. Please login again.', 401),
+      );
 
     const verifyToken = jwt.verify(
       token,
