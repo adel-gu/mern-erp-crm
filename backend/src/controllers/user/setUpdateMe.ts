@@ -6,7 +6,7 @@ const setUpdateMe = async (req: Request, res: Response, next: NextFunction) => {
     return next(
       new AppErrorHandler('This route is not for updating user password', 400),
     );
-  req.params.id = req.adminId;
+
   req.body = {
     name: req.body.name,
     email: req.body.email,
