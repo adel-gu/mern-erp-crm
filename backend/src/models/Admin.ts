@@ -1,20 +1,28 @@
 import crypto from 'crypto';
-import mongoose, { Model, Types, Query } from 'mongoose';
+import mongoose, { Model, Query } from 'mongoose';
+import validator from 'validator';
 import bcrypt from 'bcrypt';
 
-interface IAdminPassword {
+enum Roles {
+  admin = 'admin',
+}
+
+interface IAdmin {
   active: boolean;
-  user: Types.ObjectId;
+  name: string;
+  email: string;
   password: string;
-  createdAt: Date;
+  role: Roles;
   salt: string;
+  createdAt: Date;
+  photo?: string;
   passwordConfirm?: string;
   passwordChangedAt?: Date;
   passwordResetToken?: string;
   passwordResetExpires?: Date;
 }
 
-interface IAdminPasswordMethods {
+interface IAdminMethods {
   checkIsPasswordCorrect(
     password: string,
     hashPassword: string,
@@ -23,33 +31,43 @@ interface IAdminPasswordMethods {
   checkIsTokenIssuedAfterPwdChanged(JWTTimestamp: number): boolean;
 }
 
-type AdminPasswordModelType = Model<IAdminPassword, {}, IAdminPasswordMethods>;
+type AdminModelType = Model<IAdmin, {}, IAdminMethods>;
 
-const schema = new mongoose.Schema<
-  IAdminPassword,
-  AdminPasswordModelType,
-  IAdminPasswordMethods
->({
+const schema = new mongoose.Schema<IAdmin, AdminModelType, IAdminMethods>({
   active: { type: Boolean, default: true, select: false },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', unique: true },
+  name: { type: String, required: [true, 'Name field is required'] },
+  email: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    required: [true, 'Name field is required'],
+    validate: [validator.isEmail, 'Please provide a correct email'],
+    unique: true,
+  },
   password: {
     type: String,
     required: [true, 'Password field is required'],
     minlength: 8,
     select: false,
   },
-  passwordConfirm: {
+  role: {
     type: String,
-    required: [true, 'Confirm Password field is required'],
-    validate: {
-      validator: function (this: IAdminPassword, val: string): boolean {
-        return this.password === val;
-      },
-    },
+    enum: Roles,
+    default: Roles.admin,
   },
   createdAt: {
     type: Date,
     default: Date.now(),
+  },
+  photo: String,
+  passwordConfirm: {
+    type: String,
+    required: [true, 'Confirm Password field is required'],
+    validate: {
+      validator: function (this: IAdmin, val: string): boolean {
+        return this.password === val;
+      },
+    },
   },
   salt: String,
   passwordChangedAt: Date,
@@ -57,27 +75,10 @@ const schema = new mongoose.Schema<
   passwordResetExpires: Date,
 });
 
-schema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  this.salt = await bcrypt.genSalt(12);
-  this.password = await bcrypt.hash(this.password + this.salt, this.salt);
-  this.passwordConfirm = undefined;
+schema.pre<Query<IAdmin | IAdmin[], AdminModelType>>(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
   next();
 });
-
-schema.pre('save', async function (next) {
-  if (this.isModified('password') && this.isNew) return next();
-  this.passwordChangedAt = new Date(Date.now() - 1000);
-  next();
-});
-
-schema.pre<Query<IAdminPassword | IAdminPassword[], AdminPasswordModelType>>(
-  /^find/,
-  function (next) {
-    this.find({ active: { $ne: false } });
-    next();
-  },
-);
 
 schema.method(
   'checkIsPasswordCorrect',
@@ -113,8 +114,5 @@ schema.method(
   },
 );
 
-const AdminPassword = mongoose.model<IAdminPassword, AdminPasswordModelType>(
-  'AdminPassword',
-  schema,
-);
-export default AdminPassword;
+const Admin = mongoose.model<IAdmin, AdminModelType>('Admin', schema);
+export default Admin;
