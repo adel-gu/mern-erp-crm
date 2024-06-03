@@ -13,8 +13,8 @@ interface IAdmin {
   email: string;
   password: string;
   role: Roles;
-  salt: string;
   createdAt: Date;
+  salt?: string;
   photo?: string;
   passwordConfirm?: string;
   passwordChangedAt?: Date;
@@ -69,7 +69,7 @@ const schema = new mongoose.Schema<IAdmin, AdminModelType, IAdminMethods>({
       },
     },
   },
-  salt: String,
+  salt: { type: String, select: false },
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
