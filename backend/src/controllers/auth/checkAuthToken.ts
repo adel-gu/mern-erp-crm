@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import Admin from '../../../models/coreModels/Admin';
-import AdminPassword from '../../../models/coreModels/AdminPassword';
+import Admin from '../../models/coreModels/Admin';
+import AdminPassword from '../../models/coreModels/AdminPassword';
 
-import catchErrors from '../../../handlers/errors/catchErrors';
-import AppErrorHandler from '../../../handlers/errors/appErrorHandler';
+import catchErrors from '../../handlers/errors/catchErrors';
+import AppErrorHandler from '../../handlers/errors/appErrorHandler';
 
 declare global {
   namespace Express {

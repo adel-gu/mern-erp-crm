@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import catchErrors from '../../../handlers/errors/catchErrors';
-import Admin from '../../../models/coreModels/Admin';
-import AdminPassword from '../../../models/coreModels/AdminPassword';
+import catchErrors from '../../handlers/errors/catchErrors';
+import Admin from '../../models/coreModels/Admin';
+import AdminPassword from '../../models/coreModels/AdminPassword';
 import mongoose from 'mongoose';
 
 const deleteMe = catchErrors(

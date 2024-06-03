@@ -1,4 +1,4 @@
-import createCRUDController from '../createCrudController';
+import createCRUDController from '../crud';
 import setReadMeId from './setReadMeId';
 import setUpdateMe from './setUpdateMe';
 import updateMePassword from './updateMePassword';

@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import Admin from '../../../models/coreModels/Admin';
-import AdminPassword from '../../../models/coreModels/AdminPassword';
+import Admin from '../../models/coreModels/Admin';
+import AdminPassword from '../../models/coreModels/AdminPassword';
 import mongoose from 'mongoose';
 import setToken from './setToken';
-import catchErrors from '../../../handlers/errors/catchErrors';
+import catchErrors from '../../handlers/errors/catchErrors';
 
 const signup = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {

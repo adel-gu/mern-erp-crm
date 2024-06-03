@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import AppErrorHandler from '../../../handlers/errors/appErrorHandler';
-import catchErrors from '../../../handlers/errors/catchErrors';
-import Admin from '../../../models/coreModels/Admin';
-import AdminPassword from '../../../models/coreModels/AdminPassword';
+import AppErrorHandler from '../../handlers/errors/appErrorHandler';
+import catchErrors from '../../handlers/errors/catchErrors';
+import Admin from '../../models/coreModels/Admin';
+import AdminPassword from '../../models/coreModels/AdminPassword';
 
 const setUpdateMePassword = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
