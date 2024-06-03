@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+
 import Admin from '../../models/Admin';
-import AdminPassword from '../../models/coreModels/AdminPassword';
 
 import catchErrors from '../../handlers/errors/catchErrors';
 import AppErrorHandler from '../../handlers/errors/appErrorHandler';
@@ -25,9 +25,8 @@ const checkAuthToken = catchErrors(
     ) as jwt.JwtPayload;
 
     const admin = await Admin.findById(verifyToken.id);
-    const adminPassword = await AdminPassword.findOne({ user: admin?._id });
 
-    if (!admin || !adminPassword)
+    if (!admin)
       return next(
         new AppErrorHandler(
           'The user belong to the token no longer exist',
@@ -37,7 +36,7 @@ const checkAuthToken = catchErrors(
 
     if (
       !!verifyToken.iat &&
-      adminPassword.checkIsTokenIssuedAfterPwdChanged(verifyToken.iat)
+      admin.checkIsTokenIssuedAfterPwdChanged(verifyToken.iat)
     )
       return next(
         new AppErrorHandler(
