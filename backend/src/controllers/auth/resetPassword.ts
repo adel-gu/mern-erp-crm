@@ -1,17 +1,16 @@
 import crypto from 'crypto';
 import { NextFunction, Request, Response } from 'express';
-import Admin from '../../models/Admin';
+import Admin from '../../models/admin';
 import setToken from './setToken';
 import catchErrors from '../../handlers/errors/catchErrors';
 import AppErrorHandler from '../../handlers/errors/appErrorHandler';
 
 const resetPassword = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { email, token } = req.params;
+    const { token } = req.params;
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
     const admin = await Admin.findOne({
-      email,
       passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: Date.now() },
     });

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import Admin from '../../models/Admin';
+import Admin from '../../models/admin';
 import setToken from './setToken';
 import catchErrors from '../../handlers/errors/catchErrors';
 import AppErrorHandler from '../../handlers/errors/appErrorHandler';

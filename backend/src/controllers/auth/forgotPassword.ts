@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import Admin from '../../models/Admin';
+import Admin from '../../models/admin';
 import sendEmail from './sendEmail';
 import catchErrors from '../../handlers/errors/catchErrors';
 import AppErrorHandler from '../../handlers/errors/appErrorHandler';
@@ -17,7 +17,7 @@ const forgotPassword = catchErrors(
     await admin.save({ validateBeforeSave: false });
     const resetURL = `${req.protocol}://${req.get(
       'host',
-    )}/api/v1/reset-password/${admin.email}/${resetToken}`;
+    )}/api/v1/reset-password/${resetToken}`;
 
     const message = `Forgot your password? submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forgot your password, please ignore this email!`;
 
