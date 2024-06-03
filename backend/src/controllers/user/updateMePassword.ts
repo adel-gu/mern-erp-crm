@@ -1,37 +1,27 @@
 import { Request, Response, NextFunction } from 'express';
 import AppErrorHandler from '../../handlers/errors/appErrorHandler';
 import catchErrors from '../../handlers/errors/catchErrors';
-import Admin from '../../models/coreModels/Admin';
-import AdminPassword from '../../models/coreModels/AdminPassword';
+import Admin from '../../models/admin';
+import setToken from '../auth/setToken';
 
-const setUpdateMePassword = catchErrors(
+const updateMePassword = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { currentPassword, newPassword, passwordConfirm } = req.body;
 
-    const admin = await Admin.findById(req.adminId);
-    const adminPassword = await AdminPassword.findOne({
-      user: req.adminId,
-    }).select('+password');
+    const admin = await Admin.findById(req.params.id).select('+password +salt');
 
     if (
       !admin ||
-      !adminPassword ||
-      !(await adminPassword.checkIsPasswordCorrect(
-        currentPassword,
-        adminPassword.password,
-      ))
+      !(await admin.checkIsPasswordCorrect(currentPassword, admin.password))
     )
       return next(new AppErrorHandler('Invalid current password', 401));
 
-    adminPassword.password = req.body.newPassword;
-    adminPassword.passwordConfirm = req.body.passwordConfirm;
-    await adminPassword.save();
-
-    res.status(200).json({
-      status: 'Success',
-      data: adminPassword,
-    });
+    admin.password = newPassword;
+    admin.passwordConfirm = passwordConfirm;
+    await admin.save();
+    admin.salt = undefined;
+    setToken(res, admin._id.toString(), 'Password updated successfully');
   },
 );
 
-export default setUpdateMePassword;
+export default updateMePassword;
