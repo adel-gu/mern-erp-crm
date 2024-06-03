@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import catchErrors from '../../../handlers/errors/catchErrors';
+import catchErrors from '../../handlers/errors/catchErrors';
 
-const setReadMeId = catchErrors(
+const setMeId = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     req.params.id = req.adminId;
     next();
   },
 );
 
-export default setReadMeId;
+export default setMeId;

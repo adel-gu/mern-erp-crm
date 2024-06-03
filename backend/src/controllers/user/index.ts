@@ -1,5 +1,5 @@
-import createCRUDController from '../createCrudController';
-import setReadMeId from './setReadMeId';
+import createCRUDController from '../crud';
+import setMeId from './setMeId';
 import setUpdateMe from './setUpdateMe';
 import updateMePassword from './updateMePassword';
 import deleteMe from './deleteMe';
@@ -8,17 +8,17 @@ import {
   validateUpdateMeRequest,
 } from './validation';
 
-const createMeController = () => {
-  const meCRUDController = createCRUDController('Admin');
+const createUserController = () => {
+  const CRUDController = createCRUDController('Admin');
 
   let meMethods = {
-    setReadMeId: setReadMeId,
+    setMeId: setMeId,
 
-    readMe: meCRUDController.read,
+    readMe: CRUDController.read,
 
     setUpdateMeProfileData: setUpdateMe,
 
-    updateMeProfile: meCRUDController.update,
+    updateMeProfile: CRUDController.update,
     updateMePassword: updateMePassword,
 
     deleteMe: deleteMe,
@@ -29,4 +29,6 @@ const createMeController = () => {
   return meMethods;
 };
 
-export default createMeController;
+const userController = createUserController();
+
+export default userController;

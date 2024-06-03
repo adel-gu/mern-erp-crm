@@ -4,8 +4,8 @@ import {
   validationResult,
 } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
-import AppErrorHandler from '../../../handlers/errors/appErrorHandler';
-import catchErrors from '../../../handlers/errors/catchErrors';
+import AppErrorHandler from '../../handlers/errors/appErrorHandler';
+import catchErrors from '../../handlers/errors/catchErrors';
 
 const handleValidationErrors = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {

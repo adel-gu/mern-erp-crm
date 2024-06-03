@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import mongoose, { Document, Model } from 'mongoose';
-import catchErrors from '../../../handlers/errors/catchErrors';
-import AppErrorHandler from '../../../handlers/errors/appErrorHandler';
+import catchErrors from '../../handlers/errors/catchErrors';
+import AppErrorHandler from '../../handlers/errors/appErrorHandler';
 
 const readDoc = (model: string) =>
   catchErrors(async (req: Request, res: Response, next: NextFunction) => {

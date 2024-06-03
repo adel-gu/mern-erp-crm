@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import Admin from '../../../models/coreModels/Admin';
-import AdminPassword from '../../../models/coreModels/AdminPassword';
 
-import catchErrors from '../../../handlers/errors/catchErrors';
-import AppErrorHandler from '../../../handlers/errors/appErrorHandler';
+import Admin from '../../models/admin';
+
+import catchErrors from '../../handlers/errors/catchErrors';
+import AppErrorHandler from '../../handlers/errors/appErrorHandler';
 
 declare global {
   namespace Express {
@@ -17,7 +17,11 @@ declare global {
 const checkAuthToken = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies['auth_token'];
-    if (!token) return next(new AppErrorHandler('', 401));
+
+    if (!token)
+      return next(
+        new AppErrorHandler('You are not logged in. Please login again.', 401),
+      );
 
     const verifyToken = jwt.verify(
       token,
@@ -25,9 +29,8 @@ const checkAuthToken = catchErrors(
     ) as jwt.JwtPayload;
 
     const admin = await Admin.findById(verifyToken.id);
-    const adminPassword = await AdminPassword.findOne({ user: admin?._id });
 
-    if (!admin || !adminPassword)
+    if (!admin)
       return next(
         new AppErrorHandler(
           'The user belong to the token no longer exist',
@@ -37,7 +40,7 @@ const checkAuthToken = catchErrors(
 
     if (
       !!verifyToken.iat &&
-      adminPassword.checkIsTokenIssuedAfterPwdChanged(verifyToken.iat)
+      admin.checkIsTokenIssuedAfterPwdChanged(verifyToken.iat)
     )
       return next(
         new AppErrorHandler(

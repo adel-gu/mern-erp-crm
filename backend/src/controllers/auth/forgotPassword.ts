@@ -1,25 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
-import Admin from '../../../models/coreModels/Admin';
-import AdminPassword from '../../../models/coreModels/AdminPassword';
+import Admin from '../../models/admin';
 import sendEmail from './sendEmail';
-import catchErrors from '../../../handlers/errors/catchErrors';
-import AppErrorHandler from '../../../handlers/errors/appErrorHandler';
+import catchErrors from '../../handlers/errors/catchErrors';
+import AppErrorHandler from '../../handlers/errors/appErrorHandler';
 
 const forgotPassword = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email } = req.body;
 
     const admin = await Admin.findOne({ email });
-    const adminPassword = await AdminPassword.findOne({ user: admin?._id });
 
-    if (!admin || !adminPassword)
+    if (!admin)
       return next(new AppErrorHandler('No user associated to that email', 404));
 
-    const resetToken = adminPassword.generateResetToken();
-    await adminPassword.save({ validateBeforeSave: false });
+    const resetToken = admin.generateResetToken();
+    await admin.save({ validateBeforeSave: false });
     const resetURL = `${req.protocol}://${req.get(
       'host',
-    )}/api/v1/reset-password/${admin.email}/${resetToken}`;
+    )}/api/v1/reset-password/${resetToken}`;
 
     const message = `Forgot your password? submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forgot your password, please ignore this email!`;
 
@@ -30,9 +28,9 @@ const forgotPassword = catchErrors(
         message,
       });
     } catch (error) {
-      adminPassword.passwordResetToken = undefined;
-      adminPassword.passwordResetExpires = undefined;
-      await adminPassword.save({ validateBeforeSave: false });
+      admin.passwordResetToken = undefined;
+      admin.passwordResetExpires = undefined;
+      await admin.save({ validateBeforeSave: false });
       return next(
         new AppErrorHandler(
           'There was an error while sending the reset token email',

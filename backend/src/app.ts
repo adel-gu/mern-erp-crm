@@ -3,11 +3,10 @@ import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 
-import adminAuth from './controllers/coreControllers/authController';
-import meController from './controllers/coreControllers/meController';
+import auth from './controllers/auth';
 
-import coreAuthRouter from './routes/coreRoutes/coreAuth';
-import coreMeRouter from './routes/coreRoutes/coreMeApi';
+import authRouter from './routes/auth';
+import adminRouter from './routes/admin';
 
 import AppErrorHandler from './handlers/errors/appErrorHandler';
 import errorRequestHandler from './handlers/errors/errorControllerHandler';
@@ -19,8 +18,8 @@ app.use(cors());
 app.use(morgan('dev'));
 
 // Routes
-app.use('/api/v1', coreAuthRouter);
-app.use('/api/v1/admin/profile', adminAuth.checkAuthToken, coreMeRouter);
+app.use('/api/v1', authRouter);
+app.use('/api/v1/admin/profile', auth.checkAuthToken, adminRouter);
 
 // Catch errors route
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
