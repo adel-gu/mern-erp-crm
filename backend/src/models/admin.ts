@@ -75,6 +75,20 @@ const schema = new mongoose.Schema<IAdmin, AdminModelType, IAdminMethods>({
   passwordResetExpires: Date,
 });
 
+schema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.salt = await bcrypt.genSalt(12);
+  this.password = await bcrypt.hash(this.password + this.salt, this.salt);
+  this.passwordConfirm = undefined;
+  next();
+});
+
+schema.pre('save', async function (next) {
+  if (this.isModified('password') && this.isNew) return next();
+  this.passwordChangedAt = new Date(Date.now() - 1000);
+  next();
+});
+
 schema.pre<Query<IAdmin | IAdmin[], AdminModelType>>(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
