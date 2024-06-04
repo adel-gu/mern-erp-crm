@@ -3,7 +3,7 @@ import catchErrors from '../../handlers/errors/catchErrors';
 import APIFeatures, { LIMIT } from '../../handlers/api/apiFeatures';
 import mongoose from 'mongoose';
 
-const readAll = (model: string) =>
+const readAllDocs = (model: string) =>
   catchErrors(async (req: Request, res: Response, next: NextFunction) => {
     const Model = mongoose.model(model);
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -13,7 +13,7 @@ const readAll = (model: string) =>
       .paginate(page).query;
 
     const docs = await query;
-    const totalItems = await Model.countDocuments();
+    const totalItems = await Model.countDocuments({ active: { $ne: false } });
     const totalPages = Math.ceil(totalItems / LIMIT);
 
     const pagination = {
@@ -31,4 +31,4 @@ const readAll = (model: string) =>
     });
   });
 
-export default readAll;
+export default readAllDocs;

@@ -6,7 +6,8 @@ import AppErrorHandler from '../../handlers/errors/appErrorHandler';
 const updateDoc = (model: string) =>
   catchErrors(async (req: Request, res: Response, next: NextFunction) => {
     const Model = mongoose.model(model);
-    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+    const { active, ...rest } = req.body;
+    const doc = await Model.findByIdAndUpdate(req.params.id, rest, {
       new: true,
       runValidators: true,
     });

@@ -7,7 +7,7 @@ const router = express.Router();
 
 // router.use(meController.setMeId);
 router
-  .route('/')
+  .route('/admin/profile')
   .get(userController.setMeId, userController.readMe)
   .patch(
     userController.validateProfileUpdateMeRequest,
@@ -18,7 +18,7 @@ router
   .delete(userController.setMeId, userController.deleteMe);
 
 router
-  .route('/update-password')
+  .route('/admin/profile/update-password')
   .patch(
     userController.validatePasswordUpdateMeRequest,
     userController.setMeId,
