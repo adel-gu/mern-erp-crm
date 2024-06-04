@@ -7,9 +7,10 @@ import {
   validateUpdateMePasswordRequest,
   validateUpdateMeRequest,
 } from './validation';
+import ModelsEnum from '../../utils/Models';
 
 const createUserController = () => {
-  const CRUDController = createCRUDController('Admin');
+  const CRUDController = createCRUDController(ModelsEnum.Admin);
 
   let meMethods = {
     setMeId: setMeId,
