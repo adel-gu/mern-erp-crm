@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import app from './app';
 
+import loadSchemas from './utils/loadSchemas';
+
 // ENV variables
 dotenv.config({ path: './.env' });
 const PORT = process.env.PORT;
@@ -18,6 +20,6 @@ const connectDb = async () => {
 };
 
 app.listen(PORT, () => {
-  connectDb();
+  connectDb().then(() => loadSchemas());
   console.log(`Server Running on Port ${PORT}...`);
 });
