@@ -36,7 +36,16 @@ const schema = new mongoose.Schema<IPeople, PeopleModelType>({
   createdAt: { type: Date, default: Date.now() },
   company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' },
   country: { type: String, trim: true },
-  phone: { type: String, trim: true },
+  phone: {
+    type: String,
+    validate: {
+      validator: function (val: string) {
+        return validator.isMobilePhone(val, 'any');
+      },
+      message: 'Please provide a valid phone number',
+    },
+    trim: true,
+  },
   email: {
     type: String,
     trim: true,
