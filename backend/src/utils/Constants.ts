@@ -8,4 +8,9 @@ enum Roles {
   admin = 'admin',
 }
 
-export { Roles, ModelsEnum };
+enum Resource {
+  people = 'people',
+  company = 'company',
+}
+
+export { Roles, ModelsEnum, Resource };
