@@ -65,7 +65,7 @@ const schema = new mongoose.Schema<ICompany, CompanyModelType>({
 schema.pre<Query<ICompany | ICompany[], CompanyModelType>>(
   /^find/,
   function (next) {
-    this.find({ active: { $ne: false } });
+    this.find({ active: { $ne: false } }).populate('contact');
     next();
   },
 );

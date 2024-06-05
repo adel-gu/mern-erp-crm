@@ -34,7 +34,10 @@ const schema = new mongoose.Schema<IPeople, PeopleModelType>({
     immutable: true,
   },
   createdAt: { type: Date, default: Date.now() },
-  company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' },
+  company: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Company',
+  },
   country: { type: String, trim: true },
   phone: {
     type: String,
@@ -57,7 +60,7 @@ const schema = new mongoose.Schema<IPeople, PeopleModelType>({
 schema.pre<Query<IPeople | IPeople[], PeopleModelType>>(
   /^find/,
   function (next) {
-    this.find({ active: { $ne: false } });
+    this.find({ active: { $ne: false } }).populate('company');
     next();
   },
 );
