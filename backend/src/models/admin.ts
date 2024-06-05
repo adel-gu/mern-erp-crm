@@ -2,10 +2,7 @@ import crypto from 'crypto';
 import mongoose, { Model, Query } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
-
-enum Roles {
-  admin = 'admin',
-}
+import { ModelsEnum, Roles } from '../utils/Constants';
 
 interface IAdmin {
   active: boolean;
@@ -128,5 +125,5 @@ schema.method(
   },
 );
 
-const Admin = mongoose.model<IAdmin, AdminModelType>('Admin', schema);
+const Admin = mongoose.model<IAdmin, AdminModelType>(ModelsEnum.Admin, schema);
 export default Admin;
