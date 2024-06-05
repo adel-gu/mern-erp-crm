@@ -8,6 +8,5 @@ const loadSchemas = () => {
     import(path.join(schemasPath, file));
   });
 };
-loadSchemas();
 
 export default loadSchemas;
