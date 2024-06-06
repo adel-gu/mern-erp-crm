@@ -1,12 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
-import mongoose, { Document, Model } from 'mongoose';
+import mongoose from 'mongoose';
 import catchErrors from '../../handlers/errors/catchErrors';
 import AppErrorHandler from '../../handlers/errors/appErrorHandler';
 
 const readDoc = (model: string) =>
   catchErrors(async (req: Request, res: Response, next: NextFunction) => {
     const Model = mongoose.model(model);
-    const doc = await Model.findById(req.params.id);
+    const doc = await Model.findOne({
+      _id: req.params.id,
+      tenantId: req.tenantId,
+    });
 
     if (!doc)
       return next(

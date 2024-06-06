@@ -8,7 +8,10 @@ const readAllDocs = (model: string) =>
     const Model = mongoose.model(model);
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
 
-    let query = new APIFeatures(Model.find(), req.query)
+    let query = new APIFeatures(
+      Model.find({ tenantId: req.tenantId }),
+      req.query,
+    )
       .filter()
       .paginate(page).query;
 

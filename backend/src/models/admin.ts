@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import mongoose, { Model, Query } from 'mongoose';
+import mongoose, { Model, Query, Types } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { ModelsEnum, Roles } from '../utils/Constants';
@@ -10,6 +10,8 @@ interface IAdmin {
   email: string;
   password: string;
   role: Roles;
+  createdBy: Types.ObjectId;
+  tenantId: Types.ObjectId;
   createdAt: Date;
   salt?: string;
   photo?: string;
@@ -55,6 +57,15 @@ const schema = new mongoose.Schema<IAdmin, AdminModelType, IAdminMethods>({
   createdAt: {
     type: Date,
     default: Date.now(),
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelsEnum.Admin,
+  },
+  tenantId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    index: true,
   },
   photo: String,
   passwordConfirm: {

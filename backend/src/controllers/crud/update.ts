@@ -7,10 +7,14 @@ const updateDoc = (model: string) =>
   catchErrors(async (req: Request, res: Response, next: NextFunction) => {
     const Model = mongoose.model(model);
     const { active, ...rest } = req.body;
-    const doc = await Model.findByIdAndUpdate(req.params.id, rest, {
-      new: true,
-      runValidators: true,
-    });
+    const doc = await Model.findOneAndUpdate(
+      { _id: req.params.id, tenantId: req.tenantId },
+      rest,
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
 
     if (!doc) return next(new AppErrorHandler(`Document not found`, 404));
     res.status(200).json({

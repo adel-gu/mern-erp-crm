@@ -10,6 +10,7 @@ declare global {
   namespace Express {
     interface Request {
       adminId: string;
+      tenantId: string;
     }
   }
 }
@@ -49,7 +50,8 @@ const checkAuthToken = catchErrors(
         ),
       );
 
-    req.adminId = admin?._id.toString();
+    req.adminId = admin._id.toString();
+    req.tenantId = admin.tenantId.toString();
     next();
   },
 );

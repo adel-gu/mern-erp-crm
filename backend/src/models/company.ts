@@ -7,6 +7,7 @@ interface ICompany {
   name: string;
   email: string;
   createdBy: Types.ObjectId;
+  tenantId: Types.ObjectId;
   createdAt: Date;
   contact?: Types.ObjectId;
   country?: string;
@@ -36,6 +37,11 @@ const schema = new mongoose.Schema<ICompany, CompanyModelType>({
     ref: ModelsEnum.Admin,
     required: [true, 'Created by field is required'],
     immutable: true,
+  },
+  tenantId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    index: true,
   },
   createdAt: { type: Date, default: Date.now() },
   contact: {

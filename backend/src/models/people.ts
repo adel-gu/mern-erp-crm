@@ -6,6 +6,7 @@ interface IPeople {
   firstName: string;
   lastName: string;
   createdBy: Types.ObjectId;
+  tenantId: Types.ObjectId;
   createdAt: Date;
   company?: Types.ObjectId;
   country?: string;
@@ -33,6 +34,11 @@ const schema = new mongoose.Schema<IPeople, PeopleModelType>(
       ref: 'Admin',
       required: [true, 'Created by field is required'],
       immutable: true,
+    },
+    tenantId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      index: true,
     },
     createdAt: { type: Date, default: Date.now() },
     company: {
