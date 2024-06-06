@@ -7,6 +7,7 @@ const createDoc = (model: string) =>
   catchErrors(async (req: Request, res: Response, next: NextFunction) => {
     const Model = mongoose.model(model);
     req.body.createdBy = req.adminId;
+    req.body.tenantId = req.tenantId;
     const { active, ...rest } = req.body;
     const doc = await Model.create(rest);
 

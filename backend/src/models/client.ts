@@ -9,6 +9,7 @@ interface IClient {
   company?: Types.ObjectId;
   people?: Types.ObjectId;
   createdBy: Types.ObjectId;
+  tenantId: Types.ObjectId;
   createdAt: Date;
 }
 
@@ -41,6 +42,11 @@ const schema = new mongoose.Schema<IClient, ClientModelType>({
     ref: ModelsEnum.Admin,
     required: [true, 'Created by field is required'],
     immutable: true,
+  },
+  tenantId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    index: true,
   },
   createdAt: { type: Date, default: Date.now() },
 });
