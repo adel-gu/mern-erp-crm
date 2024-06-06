@@ -6,7 +6,7 @@ import AppErrorHandler from '../../handlers/errors/appErrorHandler';
 const deleteDoc = (model: string) =>
   catchErrors(async (req: Request, res: Response, next: NextFunction) => {
     const Model = mongoose.model(model);
-    const doc = await Model.findByIdAndUpdate(req.params.id, { active: false });
+    const doc = await Model.findByIdAndDelete(req.params.id);
 
     if (!doc) return next(new AppErrorHandler('No document with that ID', 400));
 
