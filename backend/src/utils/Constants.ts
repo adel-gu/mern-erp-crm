@@ -1,16 +1,23 @@
 enum ModelsEnum {
   Admin = 'Admin',
-  People = 'People',
   Company = 'Company',
+  Client = 'Client',
+  People = 'People',
+}
+
+enum Resource {
+  people = 'people',
+  company = 'company',
+  client = 'client',
 }
 
 enum Roles {
   admin = 'admin',
 }
 
-enum Resource {
+enum ClientType {
   people = 'people',
   company = 'company',
 }
 
-export { Roles, ModelsEnum, Resource };
+export { Roles, ClientType, ModelsEnum, Resource };
