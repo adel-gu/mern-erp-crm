@@ -1,9 +1,9 @@
 import mongoose, { Types, Model, Query, Document } from 'mongoose';
 import validator from 'validator';
 import { ModelsEnum } from '../utils/Constants';
+import AppErrorHandler from '../handlers/errors/appErrorHandler';
 
 interface ICompany {
-  active: boolean;
   name: string;
   email: string;
   createdBy: Types.ObjectId;
@@ -12,12 +12,12 @@ interface ICompany {
   country?: string;
   phone?: string;
   website?: string;
+  isClient?: boolean;
 }
 
 type CompanyModelType = Model<ICompany>;
 
 const schema = new mongoose.Schema<ICompany, CompanyModelType>({
-  active: { type: Boolean, default: true, select: false },
   name: {
     type: String,
     required: [true, 'Name field is required'],
@@ -38,7 +38,11 @@ const schema = new mongoose.Schema<ICompany, CompanyModelType>({
     immutable: true,
   },
   createdAt: { type: Date, default: Date.now() },
-  contact: { type: mongoose.Schema.Types.ObjectId, ref: ModelsEnum.People },
+  contact: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ModelsEnum.People,
+    autopopulate: true,
+  },
   country: { type: String, trim: true },
   phone: {
     type: String,
@@ -60,15 +64,31 @@ const schema = new mongoose.Schema<ICompany, CompanyModelType>({
     },
     message: 'Please Provide a valid URL',
   },
+  isClient: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 schema.pre<Query<ICompany | ICompany[], CompanyModelType>>(
-  /^find/,
-  function (next) {
-    this.find({ active: { $ne: false } }).populate('contact');
+  'findOneAndDelete',
+  async function (next) {
+    try {
+      const companyDoc = await this.model.findOne(this.getQuery());
+      if (companyDoc && companyDoc.isClient)
+        throw new AppErrorHandler(
+          'Cannot delete company that is attached to a client',
+          400,
+        );
+      throw new AppErrorHandler('This referenced company is not found', 404);
+    } catch (error) {
+      throw error;
+    }
     next();
   },
 );
+
+schema.plugin(require('mongoose-autopopulate'));
 
 const Company = mongoose.model<ICompany, CompanyModelType>(
   ModelsEnum.Company,
